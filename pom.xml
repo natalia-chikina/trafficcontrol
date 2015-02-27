@@ -62,7 +62,7 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <mainClass>ru.vsu.cs.boldinovanatalya.trafficcontrol.Test</mainClass>
+                                <mainClass>ru.vsu.cs.boldinovanatalya.trafficcontrol.Main</mainClass>
                             </manifest>
                         </archive>
                         <descriptorRefs>
