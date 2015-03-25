@@ -7,16 +7,18 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import ru.vsu.cs.boldinovanatalya.trafficcontrol.geneticalgorithm.Genotype
 
+import scala.collection.mutable.ArrayBuffer
+
 @RunWith(classOf[JUnitRunner])
 class FuzzyNetworkCreationTest extends FunSuite {
 
-  val inputSets = List(
-    List((1.0,1.0), (1.0, 2.0), (1.0, 3.0),(1.0, 3.0)),
-    List((1.0,1.0), (1.0, 2.0), (1.0, 3.0),(1.0, 3.0)),
-    List((1.0,1.0), (1.0, 2.0), (1.0, 3.0)))
-  val outSet = List((1.0,1.0), (1.0, 2.0), (1.0, 3.0), (1.0, 4.0) )
-  val weights = new Genotype(48, outSet.length, new Random()).genes
-  val network = new FuzzyNetwork(inputSets, outSet, weights)
+  val inputSets = ArrayBuffer(
+    List((1.0,1.0), (1.0, 2.0), (1.0, 3.0),(1.0, 3.0)).toIndexedSeq,
+    List((1.0,1.0), (1.0, 2.0), (1.0, 3.0),(1.0, 3.0)).toIndexedSeq,
+    List((1.0,1.0), (1.0, 2.0), (1.0, 3.0)).toIndexedSeq)
+  val outSet = ArrayBuffer((1.0,1.0), (1.0, 2.0), (1.0, 3.0), (1.0, 4.0) )
+  val weights = new Genotype(48, outSet.length, new Random(), inputSets.toIndexedSeq).weights
+  val network = new FuzzyNetwork(inputSets, outSet.toIndexedSeq, weights)
 
   test("count of input layer's neurons"){
     assert(network.getInputsCount == 3)
