@@ -7,7 +7,7 @@ import org.neuroph.util._
 import ru.vsu.cs.boldinovanatalya.trafficcontrol.fuzzyutils.functions.{GaussianFunction, CentroidDefuzzificationFunction}
 
 
-class FuzzyNetwork(inputSets:  Seq[FuzzySet], outputSet: FuzzySet, ruleLayerWeights: Seq[Seq[Double]]) extends NeuralNetwork{
+class FuzzyNetwork(inputSets:  IndexedSeq[FuzzySet], outputSet: FuzzySet, ruleLayerWeights: Seq[Seq[Double]]) extends NeuralNetwork{
 
   // set network type
   this.setNetworkType(NeuralNetworkType.NEURO_FUZZY_REASONER)
@@ -128,7 +128,7 @@ class FuzzyNetwork(inputSets:  Seq[FuzzySet], outputSet: FuzzySet, ruleLayerWeig
 }
 
 object FuzzyNetwork {
-  def apply(inputSets:  Seq[Seq[(Double, Double)]], outputSet: Seq[(Double, Double)], ruleLayerWeights: Seq[Seq[Double]] ) : FuzzyNetwork = {
+  def apply(inputSets:  IndexedSeq[FuzzySet], outputSet: FuzzySet, ruleLayerWeights: Seq[Seq[Double]] ) : FuzzyNetwork = {
     new FuzzyNetwork(inputSets, outputSet, ruleLayerWeights)
   }
 }
