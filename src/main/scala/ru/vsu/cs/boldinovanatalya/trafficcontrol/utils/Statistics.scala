@@ -7,16 +7,24 @@ import ru.vsu.cs.traffic.Direction.FORWARD
 import ru.vsu.cs.traffic.event.{ModelActed, ColorChanged, BeforeColorChanged, VehicleSpawned}
 import ru.vsu.cs.traffic.{Color, Point, TrafficModel}
 
-class Statistics(model: TrafficModel) {
+import scala.collection.mutable.ListBuffer
+
+class Statistics(model: TrafficModel, interval: Double = 10) {
   private val MinSpeed = 3
 
   private var approachingGreen_ = 0.0
   private var _maxQueuing = 0.0
   private var _maxApproaching = 0.0
+  private var _currentQueuing = ListBuffer[(Double, Double)]()
+  private var _lastTime = 0.0
 
   def maxQueuing = _maxQueuing
 
   def maxApproaching = _maxApproaching
+
+  def currentQueuing = _currentQueuing.toList
+  def averageQueuing = _currentQueuing.map(_._2).sum / _currentQueuing.length
+
 
   model.vehicleEventHandlers += {
     case VehicleSpawned(vehicle) =>
@@ -33,10 +41,15 @@ class Statistics(model: TrafficModel) {
   }
 
   model.trafficModelEventHandlers += {
-    case ModelActed(_) =>
+    case ModelActed(time) =>
+      if(time - _lastTime > interval) {
+        _currentQueuing += ((time, queuingGreen + queuingRed))
+        _lastTime = time
+      }
       if (approachingGreen > _maxApproaching) _maxApproaching = approachingGreen
       val currentQueuing = math.max(queuingGreen, queuingRed)
       if (currentQueuing > _maxQueuing) _maxQueuing = currentQueuing
+    case _ => Unit
   }
 
   def approachingGreen = {
