@@ -15,8 +15,15 @@ class GenotypeMutation(probability: Double) extends EvolutionaryOperator[Genotyp
     genotypes.foreach(x => {
       if (this.mutationProbability.nextEvent(random)) {
         for (i <- 0 until mutationCount.nextValue()) {
-          //var index = (math.abs(random.nextInt() % x.genes.length)
-          x.genes(math.abs(random.nextInt() % x.genes.length))(math.abs(random.nextInt() % x.genes(0).length)) = math.random + random.nextInt()
+          val index1 = math.abs(random.nextInt() % x.inputSets.length)
+          val index2 = math.abs(random.nextInt() % x.inputSets(index1).length)
+          val pair =  x.inputSets(index1)(index2)
+          val sign1 = if (random.nextDouble > 0.5) 1 else -1
+          val sign2 = if (random.nextDouble > 0.5) 1 else -1
+
+          x.inputSets(index1)(index2) = (pair._1 + sign1* random.nextDouble * 0.1, pair._2 + sign2 * random.nextDouble * 0.1)
+
+          x.weights(math.abs(random.nextInt() % x.weights.length))(math.abs(random.nextInt() % x.weights(0).length)) = math.random + random.nextInt()
         }
       }
     })

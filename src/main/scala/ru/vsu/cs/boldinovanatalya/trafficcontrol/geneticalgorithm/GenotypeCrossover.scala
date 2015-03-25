@@ -12,8 +12,8 @@ class GenotypeCrossover(crossoverPoints: Int, probability: Double) extends Abstr
   override def mate(parent1: Genotype, parent2: Genotype, crossoverPoints: Int, random: Random): util.List[Genotype] = {
     val offspring1 = parent1.clone().asInstanceOf[Genotype]
     val offspring2 = parent2.clone().asInstanceOf[Genotype]
-    val parentGenes = offspring1.genes
-    val offspringGenes = offspring2.genes
+    val parentGenes = offspring1.weights
+    val offspringGenes = offspring2.weights
     val length = parentGenes.length * parentGenes(0).length
     for (i <- 0 until crossoverPoints) {
       val fromIndex = math.abs(random.nextInt() % length)
@@ -25,6 +25,18 @@ class GenotypeCrossover(crossoverPoints: Int, probability: Double) extends Abstr
         val tmp = parentGenes(x)(y)
         parentGenes(x)(y) = offspringGenes(x)(y)
         offspringGenes(x)(y) = tmp
+      }
+    }
+
+    val parentinputSets = offspring1.inputSets
+    val offspringInputSets = offspring2.inputSets
+    for (i <- 0 until parentinputSets.length) {
+      for (j <- 0 until parentinputSets(i).length) {
+        if (math.random > 0.5) {
+          val tmp = parentinputSets(i)(j)
+          parentinputSets(i)(j) = offspringInputSets(i)(j)
+          offspringInputSets(i)(j) = tmp
+        }
       }
     }
     List(offspring1, offspring2)

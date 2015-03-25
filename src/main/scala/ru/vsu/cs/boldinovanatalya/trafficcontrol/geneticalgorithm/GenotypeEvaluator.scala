@@ -5,10 +5,10 @@ import java.util
 import org.uncommons.watchmaker.framework.FitnessEvaluator
 import ru.vsu.cs.boldinovanatalya.trafficcontrol.{FuzzySet, FuzzyNetwork}
 
-class GenotypeEvaluator(trainingElements: Seq[TrainingElement], inputSets: Seq[FuzzySet], outputSet: FuzzySet)  extends FitnessEvaluator[Genotype] {
+class GenotypeEvaluator(trainingElements: Seq[TrainingElement], outputSet: FuzzySet)  extends FitnessEvaluator[Genotype] {
 
   override def getFitness(genotype: Genotype, list: util.List[_ <: Genotype]): Double = {
-     val network = FuzzyNetwork(inputSets, outputSet, genotype.genes)
+     val network = FuzzyNetwork(genotype.inputSets, outputSet, genotype.weights)
     trainingElements.map(te => {
       network.setInput(te.input._1, te.input._2, te.input._3)
       network.calculate()

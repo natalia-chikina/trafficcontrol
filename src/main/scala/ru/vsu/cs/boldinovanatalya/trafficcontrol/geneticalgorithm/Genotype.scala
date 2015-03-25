@@ -2,27 +2,40 @@ package ru.vsu.cs.boldinovanatalya.trafficcontrol.geneticalgorithm
 
 import java.util.Random
 
-import scala.collection.mutable.ListBuffer
+import ru.vsu.cs.boldinovanatalya.trafficcontrol.FuzzySet
 
-class Genotype(size: Int, count: Int, r: Random) {
-  val genes = new ListBuffer[ListBuffer[Double]]()
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+
+class Genotype(size: Int, count: Int, r: Random, inSets: IndexedSeq[FuzzySet]) {
+  val inputSets = new ArrayBuffer[ArrayBuffer[(Double, Double)]]
+  for (is <- inSets) {
+    inputSets += new ArrayBuffer[(Double, Double)]()
+  }
+  for (i <- 0 until inSets.length) {
+    for (j <- 0 until inSets(i).length) {
+      val p: (Double, Double) = inSets(i)(j)
+      val p1: (Double, Double)= (p._1, p._2)
+      inputSets(i) += p1
+    }
+  }
+  val weights = new ListBuffer[ListBuffer[Double]]()
   for (i <- 0 until count) {
-    genes += new ListBuffer[Double]
+    weights += new ListBuffer[Double]
     for(j <- 0 until size) {
-      genes(i) += r.nextDouble() + r.nextInt()
+      weights(i) += r.nextDouble() + r.nextInt()
     }
   }
 
 
   override def toString: String = {
-    s"Genotype = $genes"
+    s"InputSetsParameters = $inputSets"
   }
 
   override def clone(): AnyRef = {
-    val cl = new Genotype(size, count, r)
+    val cl = new Genotype(size, count, r, inputSets)
     for (i <- 0 until count) {
       for(j <- 0 until size) {
-        cl.genes(i)(j) = genes(i)(j)
+        cl.weights(i)(j) = weights(i)(j)
       }
     }
     cl
