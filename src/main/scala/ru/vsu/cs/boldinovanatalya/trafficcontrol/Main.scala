@@ -13,9 +13,9 @@ import utils._
 
 object Main extends App {
 
-  val trainingSet = JsonUtil.fromJson[List[TrainingElement]](Source.fromFile("trainingSetFuzzyRule.json").mkString)
+  val trainingSet = JsonUtil.fromJson[List[TrainingElement]](Source.fromFile("trainingSetSim.json").mkString)
 
-  val evolver = new NetworkEvolver(trainingSet, List(normalizeFuzzySet(4).toIndexedSeq, normalizeFuzzySet(4).toIndexedSeq, normalizeFuzzySet(3).toIndexedSeq).toIndexedSeq, normalizeFuzzySet(4).toIndexedSeq, 100)
+  val evolver = new NetworkEvolver(trainingSet, List(normalizeFuzzySet(4).toIndexedSeq, normalizeFuzzySet(4).toIndexedSeq, normalizeFuzzySet(3).toIndexedSeq).toIndexedSeq, normalizeFuzzySet(4).toIndexedSeq, 100, true )
   println(Calendar.getInstance().getTime)
   val nw = evolver.evolve()
   nw.save("resultNN.nnet")
