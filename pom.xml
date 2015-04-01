@@ -145,6 +145,18 @@
             <version>2.11.0-M7</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.scalanlp</groupId>
+            <artifactId>breeze_2.11</artifactId> <!-- or 2.11 -->
+            <version>0.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalanlp</groupId>
+            <artifactId>breeze-viz_2.11</artifactId> <!-- or 2.11 -->
+            <version>0.11</version>
+        </dependency>
+
 
 
     </dependencies>
