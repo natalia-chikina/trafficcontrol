@@ -15,14 +15,31 @@ class Statistics(model: TrafficModel, interval: Double = 1) {
   private val MinSpeed = 3
 
   private var approachingGreen_ = 0.0
+  private var _approachingRed = 0.0
+  private var _approaching = mutable.Map[Color, Double](GREEN -> 0.0, RED -> 0.0)
   private var _maxQueuing = 0.0
   private var _maxApproaching = 0.0
   private var _currentQueuing = ListBuffer[(Double, Double)]()
   private var _lastTime = 0.0
 
+
+  private var _queuingTime = mutable.Map[Vehicle, Double]()
+  private var _stoppedTime = mutable.Map[Vehicle, Double]()
+  private var _averageQueuingTime = ListBuffer[(Double, Double)]()
+
+  private var _currentSpeed =  ListBuffer[(Double, Double)]()
+
+
+
   private var _spawnedTime = mutable.Map[Vehicle, Double]()
   private var _transitionTime = mutable.Map[Vehicle, Double]()
 
+  private var _oldDistances = mutable.Map[Vehicle, Double]()
+
+  def averageSpeed = _currentSpeed.map(_._2).sum / _currentSpeed.length
+  def currentSpeed = _currentSpeed.toList
+  def averageQueuingTime = _queuingTime.map(_._2).sum / _queuingTime.size
+  def currentAverageQueuingTime = _averageQueuingTime.toList
   def maxQueuing = _maxQueuing
   def maxApproaching = _maxApproaching
   def currentQueuing = _currentQueuing.toList
@@ -33,11 +50,46 @@ class Statistics(model: TrafficModel, interval: Double = 1) {
   model.vehicleEventHandlers += {
     case VehicleSpawned(vehicle) =>
       _spawnedTime += vehicle -> model.currentTime
-      if (model.trafficLights.filter(_.color == GREEN).map(_(FORWARD)).contains(vehicle.trafficFlow)) {
-        approachingGreen_ += 1
-      }
+      _queuingTime += vehicle -> 0.0
+
+      _oldDistances += vehicle -> 0.0
+
+//      _approaching.keys.foreach(key => {
+//        if (model.trafficLights.filter(_.color == key).map(_(FORWARD)).contains(vehicle.trafficFlow)) {
+//          _approaching(key) += 1
+//        }
+//      }
+//      )
+//      if (model.trafficLights.filter(_.color == GREEN).map(_(FORWARD)).contains(vehicle.trafficFlow)) {
+//        approachingGreen_ += 1
+//      }
+
     case VehicleRemoved(vehicle) =>
-      _transitionTime += vehicle -> (model.currentTime - _spawnedTime(vehicle))
+      try {
+        _transitionTime += vehicle -> (model.currentTime - _spawnedTime(vehicle))
+        _oldDistances.remove(vehicle)
+        _spawnedTime.remove(vehicle)
+      }
+      catch {
+        case _ => Unit
+      }
+
+    case VehicleStopped (vehicle) => Unit
+      _stoppedTime += vehicle -> model.currentTime
+
+    case VehicleMoved (vehicle) =>
+      if (!_queuingTime.contains(vehicle)) _queuingTime += vehicle -> 0.0
+      _queuingTime(vehicle) += (model.currentTime - _stoppedTime.getOrElse(vehicle, model.currentTime))
+
+      try {
+        if (_oldDistances(vehicle) < 100 && vehicle.distance >= 100 && vehicle.trafficFlow.trafficLights(0).color == GREEN)
+          approachingGreen_ += 1
+
+        _oldDistances(vehicle) = vehicle.distance
+      }
+      catch {
+        case e: Exception => e.printStackTrace()
+      }
 
     case _ => Unit
   }
@@ -52,11 +104,13 @@ class Statistics(model: TrafficModel, interval: Double = 1) {
     case ModelActed(time) =>
       if(time - _lastTime > interval) {
         _currentQueuing += ((time, queuingGreen + queuingRed))
+        //_averageQueuingTime += ((time, averageQueuingTime ))
+        //_currentSpeed += ((time, model.vehicles.map(_.speed).sum / model.vehicles.length))
         _lastTime = time
       }
-      if (approachingGreen > _maxApproaching) _maxApproaching = approachingGreen
-      val currentQueuing = math.max(queuingGreen, queuingRed)
-      if (currentQueuing > _maxQueuing) _maxQueuing = currentQueuing
+      //if (approachingGreen > _maxApproaching) _maxApproaching = approachingGreen
+      //val currentQueuing = math.max(queuingGreen, queuingRed)
+      //if (currentQueuing > _maxQueuing) _maxQueuing = currentQueuing
     case _ => Unit
   }
 

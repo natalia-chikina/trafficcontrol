@@ -21,9 +21,8 @@ class GenotypeMutation(probability: Double) extends EvolutionaryOperator[Genotyp
           val sign1 = if (random.nextDouble > 0.5) 1 else -1
           val sign2 = if (random.nextDouble > 0.5) 1 else -1
 
-          x.inputSets(index1)(index2) = (pair._1 + sign1* random.nextDouble * 0.1, pair._2 + sign2 * random.nextDouble * 0.1)
-
-          x.weights(math.abs(random.nextInt() % x.weights.length))(math.abs(random.nextInt() % x.weights(0).length)) = math.random + random.nextInt()
+          x.inputSets(index1)(index2) = (pair._1 + sign1* random.nextDouble * 0.02, pair._2 + sign2 * random.nextDouble * 0.005)
+          x.weights(math.abs(random.nextInt() % x.weights.length))(math.abs(random.nextInt() % x.weights(0).length)) += 0.5 * sign1 * random.nextDouble()//math.random //+ random.nextInt() % 10
         }
       }
     })

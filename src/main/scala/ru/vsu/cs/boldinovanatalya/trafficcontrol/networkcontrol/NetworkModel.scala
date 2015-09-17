@@ -8,10 +8,13 @@ import ru.vsu.cs.traffic.TrafficModel
 import ru.vsu.cs.traffic.event.{ModelStopped, ColorChanged, BeforeColorChanged}
 import ru.vsu.cs.traffic.gui.SwingApp
 
+import scala.collection.mutable.ListBuffer
 import scala.swing.MainFrame
 
 class NetworkModel(model: TrafficModel, network: FuzzyNetwork, maxParameterValues: TrainingElement, maxExtendCount: Int = 1) {
   var count = maxExtendCount
+  val buffer = new ListBuffer[(Double, Double)]()
+
   val statistics = new Statistics(model)
   model.trafficLightEventHandlers += {
     case BeforeColorChanged(tl) =>
@@ -21,9 +24,9 @@ class NetworkModel(model: TrafficModel, network: FuzzyNetwork, maxParameterValue
           network.setInput(statistics.queuingRed / maxParameterValues.input._1, statistics.queuingGreen / maxParameterValues.input._2, statistics.approachingGreen / maxParameterValues.input._3)
           network.calculate()
           val extendedTime = network.getOutput()(0)
+          buffer += ((model.currentTime, getExtendedTime(extendedTime) * maxParameterValues.output))
           tl.intersection.extendColor(getExtendedTime(extendedTime) * maxParameterValues.output)
-          println("{\n    \"input\" : [ %f, %f, %f ],\n    \"output\" : %f\n  }".format(statistics.queuingRed / maxParameterValues.input._1,statistics.queuingGreen / maxParameterValues.input._2,statistics.approachingGreen / maxParameterValues.input._3, getExtendedTime(extendedTime)))
-          //println("inputs  = %f, %f, %f   output = %f   ".format(statistics.queuingRed / maxParameterValues.input._1, statistics.queuingGreen / maxParameterValues.input._2, statistics.approachingGreen / maxParameterValues.input._3, getExtendedTime(extendedTime)))
+         // println("{\n    \"input\" : [ %f, %f, %f ],\n    \"output\" : %f\n  }".format(statistics.queuingRed / maxParameterValues.input._1,statistics.queuingGreen / maxParameterValues.input._2,statistics.approachingGreen / maxParameterValues.input._3, getExtendedTime(extendedTime)))
           count -= 1
         }
       }

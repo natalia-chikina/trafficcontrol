@@ -22,8 +22,8 @@ class NetworkEvolver(trainingElements: Seq[TrainingElement] = null, inputSets: I
       if (isSupervised) new GenotypeEvaluatorSupervised(trainingElements, outputSet) else new GenotypeEvaluatorReinforcement(model, outputSet, maxParametersValues ),
       new TournamentSelection(new Probability(0.8)),
       new MersenneTwisterRNG())
-    engine.setSingleThreaded(true)
-    engine.addEvolutionObserver(new GeneticAlgorithmLogger)
+    engine.setSingleThreaded(false)
+    engine.addEvolutionObserver(new GeneticAlgorithmLogger(outputSet))
     val winner = engine.evolve(populationSize, 5, new TargetFitness(1, false))
     new FuzzyNetwork(winner.inputSets.toIndexedSeq, outputSet, winner.weights)
   }

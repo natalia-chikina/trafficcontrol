@@ -7,10 +7,10 @@ import org.neuroph.util._
 import ru.vsu.cs.boldinovanatalya.trafficcontrol.fuzzyutils.functions.{GaussianFunction, CentroidDefuzzificationFunction}
 
 
-class FuzzyNetwork(inputSets:  IndexedSeq[FuzzySet], outputSet: FuzzySet, ruleLayerWeights: Seq[Seq[Double]]) extends NeuralNetwork{
+class  FuzzyNetwork(inputSets:  IndexedSeq[FuzzySet], outputSet: FuzzySet, ruleLayerWeights: Seq[Seq[Double]]) extends NeuralNetwork{
 
   // set network type
-  this.setNetworkType(NeuralNetworkType.NEURO_FUZZY_REASONER)
+ // this.setNetworkType(NeuralNetworkType.NEURO_FUZZY_REASONER)
 
   private def createInputLayer() = {
     val neuronProperties = new NeuronProperties
@@ -20,7 +20,7 @@ class FuzzyNetwork(inputSets:  IndexedSeq[FuzzySet], outputSet: FuzzySet, ruleLa
 
   private def createFuzzyLayer() = {
     val neuronProperties = new NeuronProperties
-    neuronProperties.setProperty("transferFunction", TransferFunctionType.GAUSSIAN)
+    //neuronProperties.setProperty("transferFunction", TransferFunctionType.GAUSSIAN)
     val fuzzySetsLayerNodes = inputSets.map(_.length).sum
     val setLayer = LayerFactory.createLayer(fuzzySetsLayerNodes, neuronProperties)
     addLayer(setLayer)

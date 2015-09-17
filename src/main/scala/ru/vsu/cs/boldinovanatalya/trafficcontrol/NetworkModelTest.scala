@@ -14,17 +14,18 @@ import ru.vsu.cs.traffic.gui.{TrafficModelPanel, SwingApp}
 
 object NetworkModelTest extends SwingApp {
 
-  override val model = createModel
+  override val model = createModel(30)
 
   val nwDemo = NeuralNetwork.createFromFile("resultNN.nnet").asInstanceOf[FuzzyNetwork]
 
-  val networkModel = new NetworkModel(model, nwDemo, new TrainingElement((150.0, 150.0, 60.0), 30))
+//  val networkModel = new NetworkModel(model, nwDemo, new TrainingElement((25, 20, 15.0), 10))
 
   val statistics = new Statistics(model)
   override val panel: TrafficModelPanel = new TrafficModelPanel(model) {
     override def paintComponent(g: Graphics2D): Unit = {
       super.paintComponent(g)
-      g.drawString(statistics.averageQueuing.toString, 150, 150)
+      g.drawString(statistics.averageQueuing.toString, 50, 60)
+      g.drawString(model.currentTime.toString, 50, 70)
     }
 
   }

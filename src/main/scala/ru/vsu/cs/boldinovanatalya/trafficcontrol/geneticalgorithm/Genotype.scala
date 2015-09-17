@@ -19,10 +19,11 @@ class Genotype(size: Int, count: Int, r: Random, inSets: IndexedSeq[FuzzySet]) {
     }
   }
   val weights = new ListBuffer[ListBuffer[Double]]()
+  val sign1 = if (r.nextDouble > 0.5) 1 else -1
   for (i <- 0 until count) {
     weights += new ListBuffer[Double]
     for(j <- 0 until size) {
-      weights(i) += r.nextDouble() + r.nextInt()
+      weights(i) += sign1 * r.nextDouble() //+ r.nextInt() % 10
     }
   }
 
